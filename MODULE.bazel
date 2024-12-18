@@ -1,0 +1,18 @@
+bazel_dep(name = "rules_oci", version = "2.2.0")
+# For testing, we also recommend https://registry.bazel.build/modules/container_structure_test
+
+oci = use_extension("@rules_oci//oci:extensions.bzl", "oci")
+
+# Declare external images you need to pull, for example:
+oci.pull(
+    name = "base_image",
+    # 'latest' is not reproducible, but it's convenient.
+    # During the build we print a WARNING message that includes recommended 'digest' and 'platforms'
+    # values which you can use here in place of 'tag' to pin for reproducibility.
+    #tag = "2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04",
+    image = "docker.io/runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04",
+    platforms = ["linux/amd64"],
+)
+
+# For each oci.pull call, repeat the "name" here to expose them as dependencies.
+use_repo(oci, "base_image")
